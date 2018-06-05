@@ -43,7 +43,7 @@ export default class extends React.Component {
     return (
       <div>
         <div>
-          <List renderHeader={() => 'Subtitle'} className="my-list">
+          <List renderHeader={() => '出诊医师列表'} className="my-list">
             {items}
           </List>
         </div>

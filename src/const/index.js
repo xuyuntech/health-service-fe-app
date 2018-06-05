@@ -7,7 +7,6 @@ const DevURL = {
   RegisterHistory: 'http://localhost:8080',
 };
 
-
 function getURL(url, moduler) {
   if (DEV) {
     return `${DevURL[moduler]}${url}`;
@@ -17,13 +16,23 @@ function getURL(url, moduler) {
 
 export const API = {
   Find: key => getURL(`/find?key=${key}`, 'Find'),
-  Query: type => getURL(`/query?query_string=${decodeURIComponent(JSON.stringify({ selector: { docType: { $eq: type } } }))}`, 'Query'),
+  Query: (type) => {
+    if (typeof type === 'string') {
+      return getURL(`/query?query_string=${decodeURIComponent(JSON.stringify({ selector: { docType: { $eq: type } } }))}`, 'Query');
+    }
+    return getURL(`/query?query_string=${decodeURIComponent(JSON.stringify(type))}`, 'Query');
+  },
   RegisterHistory: {
     Create: (arrangementKey, userKey) => getURL(`/createRegister?arrangementKey=${arrangementKey}&userKey=${userKey}`, 'RegisterHistory'),
   },
   Arrangement: {
     Create: getURL('/arrangement', 'Arrangement'),
   },
+};
+
+export const RegisterState = {
+  Register: '已挂号',
+  Visiting: '已就诊',
 };
 
 export default {};

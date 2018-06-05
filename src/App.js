@@ -21,6 +21,7 @@ export const HospitalListView = load(() => import('./views/HospitalList'));
 export const RegisterView = load(() => import('./views/Register'));
 export const ChooseDoctorView = load(() => import('./views/ChooseDoctor'));
 export const MineView = load(() => import('./views/Mine'));
+export const OrdersView = load(() => import('./views/Orders'));
 export const DoctorDetailView = load(() => import('./views/DoctorDetail'));
 
 @observer
@@ -44,6 +45,7 @@ class App extends Component {
           <div style={{ paddingBottom: 50 }}>
             <Route exact path="/" component={HospitalListView} />
             <Route exact path="/mine" component={MineView} />
+            <Route exact path="/mine/orders" component={OrdersView} />
             <Route exact path="/hospital/:hospitalKey/chooseDoctor" component={ChooseDoctorView} />
             <Route exact path="/hospital/:hospitalKey/chooseDoctor/:doctorKey" component={DoctorDetailView} />
             <Route exact path="/hospital/:hospitalKey/chooseDoctor/:doctorKey/register/:arrangementKey" component={RegisterView} />

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
-import { Accordion, List, WhiteSpace, Button, Toast } from 'antd-mobile';
+import { Accordion, List, WhiteSpace, Button, Toast, ListView } from 'antd-mobile';
 import moment from 'moment';
 import './index.less';
 import store from './store';
@@ -21,7 +21,13 @@ export default class extends React.Component {
     try {
       const res1 = await bFetch(API.Find(doctorKey));
       const res2 = await bFetch(API.Find(hospitalKey));
-      const res3 = await bFetch(API.Query('ArrangementHistory'));
+      // const res3 = await bFetch(API.Query('ArrangementHistory'));
+      const res3 = await bFetch(API.Query({
+        selector: {
+          docType: { $eq: 'ArrangementHistory' },
+          doctorKey: { $eq: doctorKey },
+        },
+      }));
       store.doctor = JSON.parse(res1.data);
       store.hospital = JSON.parse(res2.data);
       store.arrangements = JSON.parse(res3.data);
@@ -29,10 +35,15 @@ export default class extends React.Component {
       Toast.fail(`获取医师失败:${err}`);
     }
   }
-  register = (arrangementKey) => {
-    const { hospitalKey, doctorKey } = this.context.router.route.match.params;
-    this.context.router.history.push(`/hospital/${hospitalKey}/chooseDoctor/${doctorKey}/register/${arrangementKey}`);
-  };
+  getDatePicker() {
+    return null;
+    const dates = [];
+    return (
+      <ListView
+        dataSource={dates}
+      />
+    );
+  }
   getDoctorPanel() {
     const { doctor = {} } = store;
     if (!doctor) {
@@ -50,24 +61,19 @@ export default class extends React.Component {
       </List>
     );
   }
-  getAllHospitalKeys() {
-    const { arrangements } = store;
-  }
   getArrangements() {
-    const { doctorKey } = this.context.router.route.match.params;
     const { arrangements } = store;
-    console.log(arrangements);
     const hos = {};
     for (let i = 0; i < arrangements.length; i += 1) {
       const item = arrangements[i];
       const { Key, Record } = item;
-      if (Record.doctorKey !== doctorKey) {
-        continue;
-      }
       if (!hos[Record.hospitalKey]) {
         hos[Record.hospitalKey] = [];
       }
       hos[Record.hospitalKey].push({ key: Key, ...Record });
+    }
+    if (Object.keys(hos).length === 0) {
+      return <p style={{ textAlign: 'center' }}>暂无排班记录</p>;
     }
     return (
       <Accordion activeKey={Object.keys(hos)} className="my-accordion" onChange={this.onChange}>
@@ -75,7 +81,7 @@ export default class extends React.Component {
         Object.keys(hos).map((hospitalKey) => {
           const arr = hos[hospitalKey];
           return (
-            <Accordion.Panel key={hospitalKey} header={hospitalKey}>
+            <Accordion.Panel header={(hospitalKey || '').split('-')[1]} key={hospitalKey}>
               <List className="my-list">
                 {arr.map((item) => {
                   const { visitUnix } = item;
@@ -94,6 +100,10 @@ export default class extends React.Component {
       </Accordion>
     );
   }
+  register = (arrangementKey) => {
+    const { hospitalKey, doctorKey } = this.context.router.route.match.params;
+    this.context.router.history.push(`/hospital/${hospitalKey}/chooseDoctor/${doctorKey}/register/${arrangementKey}`);
+  };
   render() {
     return (
       <div>
@@ -116,6 +126,7 @@ export default class extends React.Component {
             </Item>
           </List>
           <WhiteSpace size="lg" />
+          {this.getDatePicker()}
           {this.getArrangements()}
 
           <WhiteSpace size="lg" />

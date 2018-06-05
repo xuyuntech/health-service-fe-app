@@ -12,8 +12,7 @@ export default class extends React.Component {
     this.context.router.history.push(path);
   };
   render() {
-    console.log('this.context.router', this.context.router);
-
+    const { pathname } = this.context.router.route.location;
     return (
       <TabBar
         noRenderContent
@@ -25,22 +24,24 @@ export default class extends React.Component {
         <TabBar.Item
           title="挂号"
           key="Register"
-          icon={<div style={{
-                width: '22px',
-                height: '22px',
-                background: 'url(https://zos.alipayobjects.com/rmsportal/sifuoDUQdAFKAVcFGROC.svg) center center /  21px 21px no-repeat',
-              }}
-          />
-            }
-          selectedIcon={<div style={{
-                width: '22px',
-                height: '22px',
-                background: 'url(https://zos.alipayobjects.com/rmsportal/iSrlOTqrKddqbOmlvUfq.svg) center center /  21px 21px no-repeat',
-              }}
-          />
-            }
-          selected={store.selectedTab === 'RegisterTab'}
-          badge={1}
+          icon={
+            <div style={{
+                  width: '22px',
+                  height: '22px',
+                  background: 'url(https://gw.alipayobjects.com/zos/rmsportal/BTSsmHkPsQSPTktcXyTV.svg) center center /  21px 21px no-repeat',
+                }}
+            />
+              }
+          selectedIcon={
+            <div style={{
+                  width: '22px',
+                  height: '22px',
+                  background: 'url(https://gw.alipayobjects.com/zos/rmsportal/ekLecvKBnRazVLXbWOnE.svg) center center /  21px 21px no-repeat',
+                }}
+            />
+              }
+          selected={!pathname.startsWith('/mine')}
+          // badge={1}
           onPress={() => { this.onItemPress('/', 'RegisterTab'); }}
           data-seed="logId"
         />
@@ -63,8 +64,8 @@ export default class extends React.Component {
               }
           title="我的"
           key="mine"
-          badge="new"
-          selected={store.selectedTab === 'MineTab'}
+          // badge="new"
+          selected={pathname.startsWith('/mine')}
           onPress={() => { this.onItemPress('/mine', 'MineTab'); }}
           data-seed="logId1"
         />
