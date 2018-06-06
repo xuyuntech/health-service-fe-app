@@ -33,6 +33,7 @@ export const API = {
 export const RegisterState = {
   Register: '已挂号',
   Visiting: '已就诊',
+  Finished: '已完成',
 };
 
 export default {};

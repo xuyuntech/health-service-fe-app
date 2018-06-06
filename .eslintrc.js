@@ -9,5 +9,6 @@ module.exports = {
         "no-script-url": "off",
         "camelcase": "off",
         "react/no-multi-comp": "off",
+        "react/sort-comp": "off",
     },
 };

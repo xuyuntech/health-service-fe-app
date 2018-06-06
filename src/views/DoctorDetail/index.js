@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
-import { Accordion, List, WhiteSpace, Button, Toast, ListView } from 'antd-mobile';
+import { Accordion, List, WhiteSpace, Button, Toast, DatePicker, ActivityIndicator } from 'antd-mobile';
 import moment from 'moment';
 import './index.less';
 import store from './store';
@@ -22,26 +22,56 @@ export default class extends React.Component {
       const res1 = await bFetch(API.Find(doctorKey));
       const res2 = await bFetch(API.Find(hospitalKey));
       // const res3 = await bFetch(API.Query('ArrangementHistory'));
-      const res3 = await bFetch(API.Query({
-        selector: {
-          docType: { $eq: 'ArrangementHistory' },
-          doctorKey: { $eq: doctorKey },
-        },
-      }));
+      // const res3 = await bFetch(API.Query({
+      //   selector: {
+      //     docType: { $eq: 'ArrangementHistory' },
+      //     doctorKey: { $eq: doctorKey },
+      //     visitDate: { $eq: moment(store.selectedDate).format('YYYY-MM-DD') },
+      //   },
+      // }));
       store.doctor = JSON.parse(res1.data);
       store.hospital = JSON.parse(res2.data);
-      store.arrangements = JSON.parse(res3.data);
+      // store.arrangements = JSON.parse(res3.data);
+      await this.load();
     } catch (err) {
       Toast.fail(`获取医师失败:${err}`);
     }
   }
+  async load() {
+    store.loading = true;
+    const { hospitalKey, doctorKey } = this.context.router.route.match.params;
+    try {
+      store.arrangements = [];
+      const res3 = await bFetch(API.Query({
+        selector: {
+          docType: { $eq: 'ArrangementHistory' },
+          doctorKey: { $eq: doctorKey },
+          hospitalKey: { $eq: hospitalKey },
+          visitDate: { $eq: moment(store.selectedDate).format('YYYY-MM-DD') },
+        },
+      }));
+      store.arrangements = JSON.parse(res3.data);
+    } catch (err) {
+      Toast.fail(`获取医师失败:${err}`);
+    }
+    store.loading = false;
+  }
   getDatePicker() {
-    return null;
-    const dates = [];
     return (
-      <ListView
-        dataSource={dates}
-      />
+      <List>
+        <DatePicker
+          mode="date"
+          title="Select Date"
+          extra="Optional"
+          value={store.selectedDate}
+          onChange={(date) => {
+            store.selectedDate = date;
+            setTimeout(() => { this.load(); }, 300);
+          }}
+        >
+          <List.Item arrow="horizontal">选择日期</List.Item>
+        </DatePicker>
+      </List>
     );
   }
   getDoctorPanel() {
@@ -130,6 +160,7 @@ export default class extends React.Component {
           {this.getArrangements()}
 
           <WhiteSpace size="lg" />
+          <ActivityIndicator animating={store.loading} toast text="正在加载" />
         </div>
       </div>
     );
