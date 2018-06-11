@@ -1,4 +1,4 @@
-export const BaseURL = 'https://api.boxlinker.com';
+export const BaseURL = 'http://47.254.43.233:8080';
 export const DEV = process.env.NODE_ENV === 'development';
 const DevURL = {
   Find: 'http://localhost:8080',

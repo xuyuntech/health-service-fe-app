@@ -82,7 +82,7 @@ export default class extends React.Component {
     return (
       <List className="my-list">
         <Item
-          thumb={<img alt="doctorKey" src="http://via.placeholder.com/100x100" style={{ width: 50, height: 50 }} />}
+          thumb={<img alt="doctorKey" src={doctor.avatar} style={{ width: 50, height: 50 }} />}
           multipleLine
           onClick={() => {}}
         >

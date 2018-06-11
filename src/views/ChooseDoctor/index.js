@@ -32,6 +32,7 @@ export default class extends React.Component {
       <Item
         key={item.Key}
         multipleLine
+        thumb={<img alt="doctorKey" src={item.Record.avatar} style={{ width: 50, height: 50 }} />}
         onClick={() => this.context.router.history.push(`/hospital/${hospitalKey}/chooseDoctor/${item.Key}`)}
         extra={<Button type="ghost" size="small" onClick={() => { this.register(item); }}>预约</Button>}
       >
